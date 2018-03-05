@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  Digit-Recognizer-via-Metal
 //
-//  Created by Andrey on 05.03.2018.
+//  Created by Andrey Morozov on 05.03.2018.
 //  Copyright © 2018 Jastic7. All rights reserved.
 //
 

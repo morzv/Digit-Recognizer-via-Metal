@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		55CDB4BA204DA4AE00172632 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CDB4B9204DA4AE00172632 /* AppDelegate.swift */; };
-		55CDB4BC204DA4AE00172632 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CDB4BB204DA4AE00172632 /* ViewController.swift */; };
+		55CDB4BC204DA4AE00172632 /* RecognizerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CDB4BB204DA4AE00172632 /* RecognizerViewController.swift */; };
 		55CDB4BF204DA4AE00172632 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 55CDB4BD204DA4AE00172632 /* Main.storyboard */; };
 		55CDB4C1204DA4AE00172632 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55CDB4C0204DA4AE00172632 /* Assets.xcassets */; };
 		55CDB4C4204DA4AE00172632 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 55CDB4C2204DA4AE00172632 /* LaunchScreen.storyboard */; };
@@ -17,7 +17,7 @@
 /* Begin PBXFileReference section */
 		55CDB4B6204DA4AE00172632 /* Digit-Recognizer-via-Metal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Digit-Recognizer-via-Metal.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		55CDB4B9204DA4AE00172632 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		55CDB4BB204DA4AE00172632 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		55CDB4BB204DA4AE00172632 /* RecognizerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizerViewController.swift; sourceTree = "<group>"; };
 		55CDB4BE204DA4AE00172632 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		55CDB4C0204DA4AE00172632 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		55CDB4C3204DA4AE00172632 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -55,7 +55,7 @@
 			isa = PBXGroup;
 			children = (
 				55CDB4B9204DA4AE00172632 /* AppDelegate.swift */,
-				55CDB4BB204DA4AE00172632 /* ViewController.swift */,
+				55CDB4BB204DA4AE00172632 /* RecognizerViewController.swift */,
 				55CDB4BD204DA4AE00172632 /* Main.storyboard */,
 				55CDB4C0204DA4AE00172632 /* Assets.xcassets */,
 				55CDB4C2204DA4AE00172632 /* LaunchScreen.storyboard */,
@@ -136,7 +136,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				55CDB4BC204DA4AE00172632 /* ViewController.swift in Sources */,
+				55CDB4BC204DA4AE00172632 /* RecognizerViewController.swift in Sources */,
 				55CDB4BA204DA4AE00172632 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
