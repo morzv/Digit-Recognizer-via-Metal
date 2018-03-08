@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5526A327204F38AA00C30D22 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 5526A326204F38AA00C30D22 /* Shaders.metal */; };
+		5526A329205075C000C30D22 /* CaptureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5526A328205075C000C30D22 /* CaptureSession.swift */; };
+		5526A32B205077AA00C30D22 /* CaptureDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5526A32A205077AA00C30D22 /* CaptureDevice.swift */; };
+		5526A32D205093DA00C30D22 /* TextureConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5526A32C205093DA00C30D22 /* TextureConverter.swift */; };
 		55CDB4BA204DA4AE00172632 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CDB4B9204DA4AE00172632 /* AppDelegate.swift */; };
 		55CDB4BC204DA4AE00172632 /* RecognizerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CDB4BB204DA4AE00172632 /* RecognizerViewController.swift */; };
 		55CDB4BF204DA4AE00172632 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 55CDB4BD204DA4AE00172632 /* Main.storyboard */; };
@@ -15,6 +19,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5526A326204F38AA00C30D22 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		5526A328205075C000C30D22 /* CaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureSession.swift; sourceTree = "<group>"; };
+		5526A32A205077AA00C30D22 /* CaptureDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureDevice.swift; sourceTree = "<group>"; };
+		5526A32C205093DA00C30D22 /* TextureConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureConverter.swift; sourceTree = "<group>"; };
 		55CDB4B6204DA4AE00172632 /* Digit-Recognizer-via-Metal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Digit-Recognizer-via-Metal.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		55CDB4B9204DA4AE00172632 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		55CDB4BB204DA4AE00172632 /* RecognizerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizerViewController.swift; sourceTree = "<group>"; };
@@ -60,6 +68,10 @@
 				55CDB4C0204DA4AE00172632 /* Assets.xcassets */,
 				55CDB4C2204DA4AE00172632 /* LaunchScreen.storyboard */,
 				55CDB4C5204DA4AE00172632 /* Info.plist */,
+				5526A326204F38AA00C30D22 /* Shaders.metal */,
+				5526A328205075C000C30D22 /* CaptureSession.swift */,
+				5526A32A205077AA00C30D22 /* CaptureDevice.swift */,
+				5526A32C205093DA00C30D22 /* TextureConverter.swift */,
 			);
 			path = "Digit-Recognizer-via-Metal";
 			sourceTree = "<group>";
@@ -136,8 +148,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5526A32D205093DA00C30D22 /* TextureConverter.swift in Sources */,
+				5526A327204F38AA00C30D22 /* Shaders.metal in Sources */,
+				5526A32B205077AA00C30D22 /* CaptureDevice.swift in Sources */,
 				55CDB4BC204DA4AE00172632 /* RecognizerViewController.swift in Sources */,
 				55CDB4BA204DA4AE00172632 /* AppDelegate.swift in Sources */,
+				5526A329205075C000C30D22 /* CaptureSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,7 +291,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 58CCZPCE6T;
 				INFOPLIST_FILE = "Digit-Recognizer-via-Metal/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Jastic7.Digit-Recognizer-via-Metal";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -289,7 +307,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 58CCZPCE6T;
 				INFOPLIST_FILE = "Digit-Recognizer-via-Metal/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Jastic7.Digit-Recognizer-via-Metal";
 				PRODUCT_NAME = "$(TARGET_NAME)";
