@@ -9,7 +9,7 @@
 import UIKit
 import MetalKit
 import AVFoundation
-
+import MetalPerformanceShaders
 
 class RecognizerViewController: UIViewController {
 
@@ -24,6 +24,18 @@ class RecognizerViewController: UIViewController {
     var commandQueue: MTLCommandQueue!
     
     var renderPipelineState: MTLRenderPipelineState?
+    var isActiveFilter: Bool = false
+    var isBlurActive: Bool = false
+    
+    lazy var blurFilter: MPSUnaryImageKernel = {
+        return MPSImageGaussianBlur(device: metalDevice!, sigma: 3.0)
+    }()
+    
+    lazy var thresholdFilter: MPSUnaryImageKernel = {
+        return MPSImageThresholdBinaryInverse(device: metalDevice!, thresholdValue: 0.5, maximumValue: 1.0, linearGrayColorTransform: nil)
+    }()
+    
+    var filterSequence: FilterSequence!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,6 +47,7 @@ class RecognizerViewController: UIViewController {
         
         recognizeButton.layer.cornerRadius = recognizeButton.frame.width / 2.0
         
+        filterSequence = FilterSequence(metalDevice: metalDevice!, textureSize: metalView.drawableSize)
         initializeRenderPipelineState()
     }
 
@@ -44,7 +57,7 @@ class RecognizerViewController: UIViewController {
         metalView.device = self.metalDevice
         metalView.delegate = self
         metalView.colorPixelFormat = .bgra8Unorm
-        metalView.framebufferOnly = true
+        metalView.framebufferOnly = false
         
         session.start()
     }
@@ -77,6 +90,22 @@ class RecognizerViewController: UIViewController {
         }
     }
     
+    @IBAction func filterDidChangeState(_ sender: UISwitch) {
+        isActiveFilter = sender.isOn
+        if sender.isOn {
+            filterSequence.add(filter: thresholdFilter)
+        } else {
+            filterSequence.remove(filter: thresholdFilter)
+        }
+    }
+    @IBAction func blurDidChangeState(_ sender: UISwitch) {
+        isBlurActive = sender.isOn
+        if sender.isOn {
+            filterSequence.add(filter: blurFilter)
+        } else {
+            filterSequence.remove(filter: blurFilter)
+        }
+    }
 }
 
 extension RecognizerViewController : CaptureSessionDelegate {
@@ -96,13 +125,17 @@ extension RecognizerViewController : MTKViewDelegate {
             let renderPipelineState = renderPipelineState else {
                 return
         }
+        
 
         let commandBuffer = commandQueue.makeCommandBuffer()!
+        
         let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: currentRenderPassDescriptor)!
         encoder.setRenderPipelineState(renderPipelineState)
         encoder.setFragmentTexture(texture, index: 0)
         encoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4, instanceCount: 1)
         encoder.endEncoding()
+        
+        filterSequence.encode(to: commandBuffer, sourceTexture: texture, destinationTexture: currentDrawable.texture)
         
         commandBuffer.present(currentDrawable)
         commandBuffer.commit()
