@@ -15,6 +15,7 @@ class RecognizerViewController: UIViewController {
 
     @IBOutlet weak var metalView: MTKView!
     @IBOutlet weak var recognizeButton: UIButton!
+    @IBOutlet weak var filtersCollectionView: UICollectionView!
     
     var camera: CaptureDevice!
     var session: CaptureSession!
@@ -24,21 +25,16 @@ class RecognizerViewController: UIViewController {
     var commandQueue: MTLCommandQueue!
     
     var renderPipelineState: MTLRenderPipelineState?
-    var isActiveFilter: Bool = false
-    var isBlurActive: Bool = false
     
-    lazy var blurFilter: MPSUnaryImageKernel = {
-        return MPSImageGaussianBlur(device: metalDevice!, sigma: 3.0)
-    }()
-    
-    lazy var thresholdFilter: MPSUnaryImageKernel = {
-        return MPSImageThresholdBinaryInverse(device: metalDevice!, thresholdValue: 0.5, maximumValue: 1.0, linearGrayColorTransform: nil)
-    }()
-    
+    var filterLibrary: FilterLibrary!
     var filterSequence: FilterSequence!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        filtersCollectionView.dataSource = self
+        filtersCollectionView.delegate = self
+        filtersCollectionView.allowsMultipleSelection = true
         
         commandQueue = metalDevice?.makeCommandQueue()
         camera = CaptureDevice(deviceType: .builtInWideAngleCamera, mediaType: .video, devicePosition: .back)
@@ -47,6 +43,7 @@ class RecognizerViewController: UIViewController {
         
         recognizeButton.layer.cornerRadius = recognizeButton.frame.width / 2.0
         
+        filterLibrary = FilterLibrary(metalDevice: metalDevice!)
         filterSequence = FilterSequence(metalDevice: metalDevice!, textureSize: metalView.drawableSize)
         initializeRenderPipelineState()
     }
@@ -89,23 +86,6 @@ class RecognizerViewController: UIViewController {
             return
         }
     }
-    
-    @IBAction func filterDidChangeState(_ sender: UISwitch) {
-        isActiveFilter = sender.isOn
-        if sender.isOn {
-            filterSequence.add(filter: thresholdFilter)
-        } else {
-            filterSequence.remove(filter: thresholdFilter)
-        }
-    }
-    @IBAction func blurDidChangeState(_ sender: UISwitch) {
-        isBlurActive = sender.isOn
-        if sender.isOn {
-            filterSequence.add(filter: blurFilter)
-        } else {
-            filterSequence.remove(filter: blurFilter)
-        }
-    }
 }
 
 extension RecognizerViewController : CaptureSessionDelegate {
@@ -126,7 +106,6 @@ extension RecognizerViewController : MTKViewDelegate {
                 return
         }
         
-
         let commandBuffer = commandQueue.makeCommandBuffer()!
         
         let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: currentRenderPassDescriptor)!
@@ -139,5 +118,37 @@ extension RecognizerViewController : MTKViewDelegate {
         
         commandBuffer.present(currentDrawable)
         commandBuffer.commit()
+    }
+}
+
+extension RecognizerViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return filterLibrary.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FilterCell", for: indexPath) as! FilterCollectionViewCell
+        let filterTitle = filterLibrary.filterTitle(at: indexPath.row)
+        cell.titleLabel.text = filterTitle
+        
+        return cell
+    }
+}
+
+extension RecognizerViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath) as! FilterCollectionViewCell
+        cell.refreshTitleLabel()
+        
+        let kernel = filterLibrary.filterKernel(at: indexPath.row)
+        filterSequence.add(filter: kernel)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath) as! FilterCollectionViewCell
+        cell.refreshTitleLabel()
+        
+        let kernel = filterLibrary.filterKernel(at: indexPath.row)
+        filterSequence.remove(filter: kernel)
     }
 }
