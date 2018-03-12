@@ -17,7 +17,7 @@ class FilterLibrary {
     private let filters: [Filter]
     
     init(metalDevice device: MTLDevice) {
-        let blur = MPSImageGaussianBlur(device: device, sigma: 3.0)
+        let blur = MPSImageGaussianBlur(device: device, sigma: 1.2)
         let threshold = MPSImageThresholdBinaryInverse(device: device, thresholdValue: 0.5, maximumValue: 1.0, linearGrayColorTransform: nil)
         
         let weights: [Float] = [0.3, 0, 0.3,
@@ -28,8 +28,8 @@ class FilterLibrary {
         
         filters = [Filter(name: "Blur", kernel: blur),
                    Filter(name: "Threshold", kernel: threshold),
-                   Filter(name: "Erode", kernel: erode),
-                   Filter(name: "Dilate", kernel: dilate)]
+                   Filter(name: "Dilate", kernel: dilate),
+                   Filter(name: "Erode", kernel: erode)]
     }
     
     func filterTitle(at position: Int) -> String {

@@ -9,11 +9,16 @@
 import Foundation
 import MetalPerformanceShaders
 
+
 class FilterSequence {
     var filters = [MPSUnaryImageKernel]()
     var temporaryTextures = [MTLTexture]()
     let textureDescriptor: MTLTextureDescriptor
     let metalDevice: MTLDevice
+    
+    var isEmpty: Bool {
+        return filters.isEmpty
+    }
     
     init(metalDevice device: MTLDevice, textureSize: CGSize) {
         metalDevice = device

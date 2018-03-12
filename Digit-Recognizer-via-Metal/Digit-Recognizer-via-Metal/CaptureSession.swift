@@ -19,12 +19,15 @@ class CaptureSession: NSObject {
     let captureSession = AVCaptureSession()
     let captureDevice: CaptureDevice
     
+    let size = CGSize(width: 720, height: 1280)
+    
     private var sessionQueue = DispatchQueue(label: "CaptureSessionQueue")
     private let textureConverter = TextureConverter()
 
     init(metalDevice: MTLDevice, captureDevice: CaptureDevice)
     {
         self.captureDevice = captureDevice
+        captureSession.sessionPreset = .iFrame1280x720
         CVMetalTextureCacheCreate(kCFAllocatorDefault, nil, metalDevice, nil, &textureCache)
     }
     

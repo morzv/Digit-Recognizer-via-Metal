@@ -20,9 +20,21 @@
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FZU-cW-bYi" customClass="MTKView">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kmv-Im-JdX" customClass="ComponentsView" customModule="Digit_Recognizer_via_Metal" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </view>
+                                </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="kmv-Im-JdX" firstAttribute="leading" secondItem="FZU-cW-bYi" secondAttribute="leading" id="6Su-Im-TII"/>
+                                    <constraint firstAttribute="bottom" secondItem="kmv-Im-JdX" secondAttribute="bottom" id="Y96-tK-32w"/>
+                                    <constraint firstAttribute="trailing" secondItem="kmv-Im-JdX" secondAttribute="trailing" id="chO-DF-aV8"/>
+                                    <constraint firstItem="kmv-Im-JdX" firstAttribute="top" secondItem="FZU-cW-bYi" secondAttribute="top" id="mxx-mz-KHc"/>
+                                </constraints>
                             </view>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="WmK-Wl-l0a">
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.29999999999999999" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="WmK-Wl-l0a">
                                 <rect key="frame" x="0.0" y="513" width="375" height="60"/>
                                 <color key="backgroundColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
@@ -87,6 +99,7 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="componentsView" destination="kmv-Im-JdX" id="IHV-9c-A61"/>
                         <outlet property="filtersCollectionView" destination="WmK-Wl-l0a" id="XBA-Zb-BUH"/>
                         <outlet property="metalView" destination="FZU-cW-bYi" id="Xhh-6o-yY2"/>
                         <outlet property="recognizeButton" destination="HTI-Nv-6yc" id="cga-cd-qEn"/>
