@@ -32,12 +32,8 @@ class FilterLibrary {
                    Filter(name: "Erode", kernel: erode)]
     }
     
-    func filterTitle(at position: Int) -> String {
-        return filters[position].name
-    }
-    
-    func filterKernel(at position: Int) -> MPSUnaryImageKernel {
-        return filters[position].kernel
+    subscript(position: Int) -> Filter {
+        return filters[position]
     }
 }
 

@@ -34,11 +34,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Digit-Recognizer-via-Metal/RecognizerViewController.swift"
-            timestampString = "542933212.078068"
+            timestampString = "543088568.442652"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "182"
-            endingLineNumber = "182"
+            startingLineNumber = "199"
+            endingLineNumber = "199"
             landmarkName = "draw(in:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -50,11 +50,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Digit-Recognizer-via-Metal/RecognizerViewController.swift"
-            timestampString = "542933212.078135"
+            timestampString = "543088568.443033"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "187"
-            endingLineNumber = "187"
+            startingLineNumber = "206"
+            endingLineNumber = "206"
             landmarkName = "draw(in:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -66,11 +66,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Digit-Recognizer-via-Metal/CNN.swift"
-            timestampString = "542933212.078239"
+            timestampString = "543088568.443241"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "107"
-            endingLineNumber = "107"
+            startingLineNumber = "111"
+            endingLineNumber = "111"
             landmarkName = "getDigit(finalLayer:)"
             landmarkType = "7">
          </BreakpointContent>

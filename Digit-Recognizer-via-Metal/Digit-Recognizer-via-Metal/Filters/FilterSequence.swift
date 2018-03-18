@@ -43,6 +43,10 @@ class FilterSequence {
         _ = temporaryTextures.popLast()
     }
     
+    func clear() {
+        filters.removeAll()
+    }
+    
     func encode(to commandBuffer: MTLCommandBuffer, sourceTexture: MTLTexture, destinationTexture: MTLTexture) {
         var lastTemporaryTexture = sourceTexture
         

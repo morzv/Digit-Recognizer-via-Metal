@@ -36,6 +36,11 @@ class RecognizerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let blurEffect = UIBlurEffect(style: .regular)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.frame = filtersCollectionView.frame
+        filtersCollectionView.backgroundColor = .clear
+        filtersCollectionView.backgroundView = blurView
         
         filtersCollectionView.dataSource = self
         filtersCollectionView.delegate = self
@@ -83,12 +88,24 @@ class RecognizerViewController: UIViewController {
 
 
     @IBAction func recognizeButtonDidTap(_ sender: UIButton) {
+        filterSequence.clear()
+    
         if sender.isSelected {
             componentsView.clear()
             session.start()
+            for index in 0..<filterLibrary.count {
+                let indexPath = IndexPath(item: index, section: 0)
+                filtersCollectionView.deselectItem(at: indexPath, animated: false)
+                self.collectionView(filtersCollectionView, didDeselectItemAt: indexPath)
+            }
         } else {
             shouldRecognize = true
             session.stop()
+            for index in 0..<filterLibrary.count {
+                let indexPath = IndexPath(item: index, section: 0)
+                filtersCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .left)
+                self.collectionView(filtersCollectionView, didSelectItemAt: indexPath)
+            }
         }
         
         sender.isSelected = !sender.isSelected
@@ -181,7 +198,9 @@ extension RecognizerViewController : MTKViewDelegate {
 //            let debugAlpaImage = UIImage(cgImage: alphaChannelImage!)
             
             for component in components {
-                let croppedImage = alphaChannelImage!.cropping(to: component)!
+                guard let croppedImage = alphaChannelImage?.cropping(to: component) else {
+                    continue
+                }
 //                let debugCropppedImage = UIImage(cgImage: croppedImage)
                 
                 let cnnImage = imageProvider.imageForCNN(from: croppedImage)
@@ -220,7 +239,7 @@ extension RecognizerViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FilterCell", for: indexPath) as! FilterCollectionViewCell
-        let filterTitle = filterLibrary.filterTitle(at: indexPath.row)
+        let filterTitle = filterLibrary[indexPath.row].name
         cell.titleLabel.text = filterTitle
         
         return cell
@@ -229,18 +248,12 @@ extension RecognizerViewController: UICollectionViewDataSource {
 
 extension RecognizerViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath) as! FilterCollectionViewCell
-        cell.refreshTitleLabel()
-        
-        let kernel = filterLibrary.filterKernel(at: indexPath.row)
+        let kernel = filterLibrary[indexPath.row].kernel
         filterSequence.add(filter: kernel)
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath) as! FilterCollectionViewCell
-        cell.refreshTitleLabel()
-        
-        let kernel = filterLibrary.filterKernel(at: indexPath.row)
+        let kernel = filterLibrary[indexPath.row].kernel
         filterSequence.remove(filter: kernel)
     }
 }
