@@ -20,11 +20,11 @@ class FilterSequence {
         return filters.isEmpty
     }
     
-    init(metalDevice device: MTLDevice, textureSize: CGSize) {
+    init(metalDevice device: MTLDevice, textureSize: (width: Int, height: Int)) {
         metalDevice = device
         textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm,
-                                                                     width: Int(textureSize.width),
-                                                                     height: Int(textureSize.height),
+                                                                     width: textureSize.width,
+                                                                     height: textureSize.height,
                                                                      mipmapped: false)
         textureDescriptor.usage.insert(.shaderWrite)
     }

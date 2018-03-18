@@ -144,15 +144,7 @@ class ComponentBuilder {
         for (_, rect) in componentRects {
             if isBoundaryPoint(rect.minX, rect.minY) || isBoundaryPoint(rect.maxX, rect.maxY){ continue }
             
-            let width = Double(rect.maxX - rect.minX) / 1.2
-            let height = Double(rect.maxY - rect.minY) / 1.2
-            
-            if width * height < 10 { continue }
-            
-            let x = Double(rect.minX) / 2.0 + 2
-            let y = Double(rect.minY) / 2.0 + 5
-            
-            let rectangle = CGRect(x: x, y: y, width: width, height: height)
+            let rectangle = CGRect(x: rect.minX, y: rect.minY, width: rect.maxX - rect.minX, height: rect.maxY - rect.minY)
             
             rectangles.append(rectangle)
         }

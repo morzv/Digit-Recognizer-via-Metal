@@ -32,6 +32,8 @@ class RecognizerViewController: UIViewController {
     var shouldRecognize: Bool = false
     var filterFinalTexture: MTLTexture!
     
+    var cnn: CNN!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -51,11 +53,13 @@ class RecognizerViewController: UIViewController {
         initializeRenderPipelineState()
         
         let textDescr = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
-                                                                 width: Int(session.size.width),
-                                                                 height: Int(session.size.height),
+                                                                 width: session.size.width,
+                                                                 height: session.size.height,
                                                                  mipmapped: false)
         textDescr.usage.insert(.shaderWrite)
         filterFinalTexture = metalDevice!.makeTexture(descriptor: textDescr)
+        
+        cnn = CNN(metalDevice: metalDevice!)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -150,11 +154,11 @@ extension RecognizerViewController : MTKViewDelegate {
                 return
             }
             
-            let bytePerPixel: CGFloat = 4.0
-            let bytesPerRow = Int(self.session.size.width * bytePerPixel)
-            let imageBytesSize = Int(self.session.size.width * self.session.size.height * bytePerPixel)
+            let bytePerPixel = 4
+            let bytesPerRow = self.session.size.width * bytePerPixel
+            let imageBytesSize = self.session.size.width * self.session.size.height * bytePerPixel
             var pixelData = [UInt8](repeating: 0, count: imageBytesSize)
-            let region = MTLRegionMake2D(0, 0, Int(self.session.size.width), Int(self.session.size.height))
+            let region = MTLRegionMake2D(0, 0, self.session.size.width, self.session.size.height)
             pixelData.withUnsafeMutableBytes {
                 self.filterFinalTexture.getBytes($0.baseAddress!, bytesPerRow: bytesPerRow, from: region, mipmapLevel: 0)
             }
@@ -165,13 +169,40 @@ extension RecognizerViewController : MTKViewDelegate {
                 return pixelIndex % 4 == 0
             }
             
-//            FileWriter.write(data: alphaChannelData, to: "alphaChannelData")
-            
-            let builder = ComponentBuilder(imageData: alphaChannelData, imageWidth: Int(self.session.size.width), imageHeight: Int(self.session.size.height))
+            let builder = ComponentBuilder(imageData: alphaChannelData, imageWidth: self.session.size.width, imageHeight: self.session.size.height)
             let components = builder.findComponents()
             
-            DispatchQueue.main.async { 
+            DispatchQueue.main.async {
                 self.componentsView.draw(components: components)
+            }
+            
+            let imageProvider = ImageProvider(rawData: alphaChannelData, imageWidth: self.session.size.width, imageHeight: self.session.size.height, cropSize: CGSize(width: 24, height: 24))
+            let alphaChannelImage = imageProvider.createImage()
+//            let debugAlpaImage = UIImage(cgImage: alphaChannelImage!)
+            
+            for component in components {
+                let croppedImage = alphaChannelImage!.cropping(to: component)!
+//                let debugCropppedImage = UIImage(cgImage: croppedImage)
+                
+                let cnnImage = imageProvider.imageForCNN(from: croppedImage)
+//                let debugCNNImage = UIImage(cgImage: cnnImage)
+                
+//                let debugCNNImage2 = UIImage(cgImage: cnnImage)
+                
+                let textDescr = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: 28, height: 28, mipmapped: false)
+                let texture = self.metalDevice?.makeTexture(descriptor: textDescr)
+                
+                let inputImage = MPSImage(texture: texture!, featureChannels: 1)
+                
+                inputImage.texture.replace(region: MTLRegionMake2D(0, 0, 28, 28), mipmapLevel: 0,
+                                           withBytes: CFDataGetBytePtr(cnnImage.dataProvider!.data!), bytesPerRow: 28)
+                
+                self.cnn.recognizeDigit(in: inputImage, completionHandler: { (digit) in
+                    print("RECOGNIZED: \(String(describing: digit))")
+                    DispatchQueue.main.async {
+                        self.componentsView.draw(digit: digit, in: component)
+                    }
+                })
             }
             
             self.shouldRecognize = false

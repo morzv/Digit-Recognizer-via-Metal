@@ -19,7 +19,7 @@ class CaptureSession: NSObject {
     let captureSession = AVCaptureSession()
     let captureDevice: CaptureDevice
     
-    let size = CGSize(width: 720, height: 1280)
+    let size: (width: Int, height: Int) = (width: 720, height: 1280)
     
     private var sessionQueue = DispatchQueue(label: "CaptureSessionQueue")
     private let textureConverter = TextureConverter()
