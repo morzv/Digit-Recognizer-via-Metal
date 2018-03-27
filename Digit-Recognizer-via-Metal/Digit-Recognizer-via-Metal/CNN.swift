@@ -91,7 +91,7 @@ class CNN {
                                         slice: i)
         }
         
-        // Metal GPUs use float16 and swift float is 32-bit
+        
         var fullResultVImagebuf = vImage_Buffer(data: &result_float_array, height: 1, width: 10, rowBytes: 10*4)
         var halfResultVImagebuf = vImage_Buffer(data: &result_half_array , height: 1, width: 10, rowBytes: 10*2)
 
@@ -107,8 +107,8 @@ class CNN {
                 mostProbableDigit = i
             }
         }
-        // return label only if prob more than 32%
-        return max > 0.32 ? mostProbableDigit : nil
+        
+        return max > 0.5 ? mostProbableDigit : nil
     }
 }
 

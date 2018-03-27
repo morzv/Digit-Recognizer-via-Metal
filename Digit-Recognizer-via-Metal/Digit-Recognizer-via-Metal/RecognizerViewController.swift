@@ -31,11 +31,17 @@ class RecognizerViewController: UIViewController {
     var filterSequence: FilterSequence!
     var shouldRecognize: Bool = false
     var filterFinalTexture: MTLTexture!
+    var recognizingResults = [RecognizingResult]()
     
     var cnn: CNN!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(showDetailsViewController))
+        swipe.direction = .up
+        metalView.addGestureRecognizer(swipe)
+        
         let blurEffect = UIBlurEffect(style: .regular)
         let blurView = UIVisualEffectView(effect: blurEffect)
         blurView.frame = filtersCollectionView.frame
@@ -76,20 +82,13 @@ class RecognizerViewController: UIViewController {
         metalView.framebufferOnly = false
         
         session.start()
-//        let imageData: [UInt8]=[255, 0, 0, 255, 255,
-//                                  0, 255, 0, 0  , 0  ,
-//                                  0, 0  , 0, 255, 255,
-//                                  0, 255, 0, 255, 0  ,
-//                                255, 0  , 0, 255, 255]
-//        let builder = ComponentBuilder(imageData: imageData, imageWidth: 5, imageHeight: 5)
-//        let components = builder.findComponents()
-//        componentsView.draw(components: components)
     }
 
 
     @IBAction func recognizeButtonDidTap(_ sender: UIButton) {
         filterSequence.clear()
-    
+        recognizingResults.removeAll()
+        
         if sender.isSelected {
             componentsView.clear()
             session.start()
@@ -110,6 +109,13 @@ class RecognizerViewController: UIViewController {
         
         sender.isSelected = !sender.isSelected
         sender.backgroundColor = sender.isSelected ? .gray : .red
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard segue.identifier == "ShowResults",
+            let resultsVC = segue.destination as? RecognizingResultViewController else { return }
+        
+        resultsVC.results = recognizingResults
     }
     
     private func initializeRenderPipelineState() {
@@ -133,6 +139,10 @@ class RecognizerViewController: UIViewController {
             assertionFailure("Failed creating a render state pipeline. Can't render the texture without one.")
             return
         }
+    }
+    
+    @objc func showDetailsViewController() {
+        performSegue(withIdentifier: "ShowResults", sender: self)
     }
 }
 
@@ -221,6 +231,9 @@ extension RecognizerViewController : MTKViewDelegate {
                     DispatchQueue.main.async {
                         self.componentsView.draw(digit: digit, in: component)
                     }
+                    
+                    let result = RecognizingResult(digit: digit, image: UIImage(cgImage: cnnImage))
+                    self.recognizingResults.append(result)
                 })
             }
             
