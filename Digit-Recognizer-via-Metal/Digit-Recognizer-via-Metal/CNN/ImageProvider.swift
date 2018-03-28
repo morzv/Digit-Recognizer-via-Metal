@@ -10,11 +10,12 @@ import AVFoundation
 import UIKit
 
 
+/// Manage image preparing for CNN input.
 class ImageProvider {
-    var rawData: [UInt8]
-    var imageWidth: Int
-    var imageHeight: Int
-    var cropSize: CGSize
+    private var rawData: [UInt8]
+    private var imageWidth: Int
+    private var imageHeight: Int
+    private var cropSize: CGSize
     
     private let bitsPerComponent = 8
     private let bytesPerPixel = 1
@@ -61,7 +62,7 @@ class ImageProvider {
         return cgImage
     }
     
-    func imageForCNN(from image: CGImage) -> CGImage {
+    func imageForCNN(from image: CGImage) -> CGImage? {
         let bytesPerRow = 28
         let cnnImageSize: (width: Int, height: Int) = (28, 28)
         let context = CGContext(data: nil, width: cnnImageSize.width, height: cnnImageSize.height, bitsPerComponent: bitsPerComponent, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: bitmapInfoRaw)!
@@ -70,9 +71,12 @@ class ImageProvider {
         context.setFillColor(UIColor.black.cgColor)
         context.fill(CGRect(x: 0, y: 0, width: cnnImageSize.width, height: cnnImageSize.height))
         
-        var drawRect = AVMakeRect(aspectRatio: CGSize(width: image.width, height: image.height), insideRect: CGRect(origin: CGPoint.zero, size: cropSize))
+        let ratioSize = CGSize(width: image.width, height: image.height)
+        let ratioRect = CGRect(origin: CGPoint.zero, size: cropSize)
+        let drawRect = AVMakeRect(aspectRatio: ratioSize, insideRect: ratioRect)
         context.draw(image, in: context.convertToUserSpace(drawRect), byTiling: false)
         
-        return (context.makeImage()?.cropping(to: CGRect(x: 0, y: 0, width: cnnImageSize.width, height: cnnImageSize.height))!)!
+        let croppedRect = CGRect(x: 0, y: 0, width: cnnImageSize.width, height: cnnImageSize.height)
+        return context.makeImage()?.cropping(to: croppedRect)
     }
 }

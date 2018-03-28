@@ -10,13 +10,15 @@ import Foundation
 import MetalPerformanceShaders
 
 
+/// Collection of filters, which can be applied for MTLTexture
 class FilterSequence {
-    var filters = [MPSUnaryImageKernel]()
-    var temporaryTextures = [MTLTexture]()
-    let textureDescriptor: MTLTextureDescriptor
-    let metalDevice: MTLDevice
+    private var filters = [MPSUnaryImageKernel]()
+    private var temporaryTextures = [MTLTexture]()
+    private let textureDescriptor: MTLTextureDescriptor
+    private let metalDevice: MTLDevice
     
-    var isEmpty: Bool {
+    /// True, if collection contains zero filters. Otherwise - false.
+    public var isEmpty: Bool {
         return filters.isEmpty
     }
     
@@ -29,6 +31,9 @@ class FilterSequence {
         textureDescriptor.usage.insert(.shaderWrite)
     }
     
+    /// Add new filter to collection.
+    ///
+    /// - Parameter filter: New filter.
     func add(filter: MPSUnaryImageKernel) {
         if !filters.isEmpty {
             temporaryTextures.append(temporaryTexture())
@@ -37,16 +42,26 @@ class FilterSequence {
         filters.append(filter)
     }
     
+    /// Remove filter from collection.
+    ///
+    /// - Parameter filter: Filter, which will be deleted
     func remove(filter: MPSUnaryImageKernel) {
         filters = filters.filter { $0 !== filter }
         
         _ = temporaryTextures.popLast()
     }
     
+    /// Remove all filters from collection.
     func clear() {
         filters.removeAll()
     }
     
+    /// Apply all filters, which contains in the collection.
+    ///
+    /// - Parameters:
+    ///   - commandBuffer: Buffer for computations.
+    ///   - sourceTexture: Origin texture.
+    ///   - destinationTexture: Final texture after filters processing.
     func encode(to commandBuffer: MTLCommandBuffer, sourceTexture: MTLTexture, destinationTexture: MTLTexture) {
         var lastTemporaryTexture = sourceTexture
         

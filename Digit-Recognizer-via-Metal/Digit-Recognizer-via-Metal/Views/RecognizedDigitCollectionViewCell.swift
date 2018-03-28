@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// Represent recognized digit.
 class RecognizedDigitCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var digitLabel: UILabel!

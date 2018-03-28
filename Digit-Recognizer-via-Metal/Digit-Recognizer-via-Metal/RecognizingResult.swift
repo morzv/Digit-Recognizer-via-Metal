@@ -8,7 +8,11 @@
 
 import UIKit
 
+/// Describe result of CNN.
 struct RecognizingResult {
+    /// Recognized digit
     let digit: Int
+    
+    /// Input image for CNN.
     let image: UIImage
 }

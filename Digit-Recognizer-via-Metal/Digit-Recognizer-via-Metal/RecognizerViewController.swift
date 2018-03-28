@@ -203,31 +203,30 @@ extension RecognizerViewController : MTKViewDelegate {
                 self.componentsView.draw(components: components)
             }
             
-            let imageProvider = ImageProvider(rawData: alphaChannelData, imageWidth: self.session.size.width, imageHeight: self.session.size.height, cropSize: CGSize(width: 24, height: 24))
+            let imageProvider = ImageProvider(rawData: alphaChannelData,
+                                              imageWidth: self.session.size.width,
+                                              imageHeight: self.session.size.height,
+                                              cropSize: CGSize(width: 24, height: 24))
             let alphaChannelImage = imageProvider.createImage()
-//            let debugAlpaImage = UIImage(cgImage: alphaChannelImage!)
             
             for component in components {
-                guard let croppedImage = alphaChannelImage?.cropping(to: component) else {
-                    continue
-                }
+                guard let croppedImage = alphaChannelImage?.cropping(to: component),
+                    let cnnImage = imageProvider.imageForCNN(from: croppedImage)  else { continue }
+
 //                let debugCropppedImage = UIImage(cgImage: croppedImage)
-                
-                let cnnImage = imageProvider.imageForCNN(from: croppedImage)
 //                let debugCNNImage = UIImage(cgImage: cnnImage)
-                
 //                let debugCNNImage2 = UIImage(cgImage: cnnImage)
                 
                 let textDescr = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: 28, height: 28, mipmapped: false)
                 let texture = self.metalDevice?.makeTexture(descriptor: textDescr)
                 
                 let inputImage = MPSImage(texture: texture!, featureChannels: 1)
+                inputImage.texture.replace(region: MTLRegionMake2D(0, 0, 28, 28),
+                                           mipmapLevel: 0,
+                                           withBytes: CFDataGetBytePtr(cnnImage.dataProvider!.data!),
+                                           bytesPerRow: 28)
                 
-                inputImage.texture.replace(region: MTLRegionMake2D(0, 0, 28, 28), mipmapLevel: 0,
-                                           withBytes: CFDataGetBytePtr(cnnImage.dataProvider!.data!), bytesPerRow: 28)
-                
-                self.cnn.recognizeDigit(in: inputImage, completionHandler: { (digit) in
-                    print("RECOGNIZED: \(String(describing: digit))")
+                self.cnn.recognizeDigit(in: inputImage, completionHandler: { digit in
                     DispatchQueue.main.async {
                         self.componentsView.draw(digit: digit, in: component)
                     }

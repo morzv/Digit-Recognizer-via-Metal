@@ -9,6 +9,7 @@
 import Foundation
 import AVFoundation
 
+/// Responds for coverting image from camera to metal texure.
 class TextureConverter {
     
     func convert(sampleBuffer buffer: CMSampleBuffer, with cameraTextureCache: CVMetalTextureCache) -> MTLTexture? {

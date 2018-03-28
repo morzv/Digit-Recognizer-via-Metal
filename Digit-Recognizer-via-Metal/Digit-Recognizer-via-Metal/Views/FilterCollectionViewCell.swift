@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// Represent one filter from FilterLibrary.
 class FilterCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var titleLabel: UILabel!
 

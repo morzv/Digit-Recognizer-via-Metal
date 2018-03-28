@@ -6,10 +6,13 @@
 //  Copyright © 2018 Jastic7. All rights reserved.
 //
 
-import Foundation
 import MetalPerformanceShaders
 
+
+/// Collection of availables filters.
 class FilterLibrary {
+    
+    /// Number of exists filters
     var count: Int {
         return filters.count
     }
@@ -35,9 +38,4 @@ class FilterLibrary {
     subscript(position: Int) -> Filter {
         return filters[position]
     }
-}
-
-struct Filter {
-    let name: String
-    let kernel: MPSUnaryImageKernel
 }

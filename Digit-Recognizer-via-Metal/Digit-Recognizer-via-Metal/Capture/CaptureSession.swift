@@ -9,18 +9,26 @@
 import Foundation
 import AVFoundation
 
+/// Protocol which notify about new texture.
 protocol CaptureSessionDelegate {
+    
+    /// Triggered, when new texture did receive.
+    ///
+    /// - Parameters:
+    ///   - _: Capture session.
+    ///   - texture: Received texture.
     func captureSession(_ : CaptureSession, didReceiveTexture texture: MTLTexture)
 }
 
+/// Manipulates camera streaming.
 class CaptureSession: NSObject {
-    var delegate: CaptureSessionDelegate?
-    private var textureCache: CVMetalTextureCache?
-    let captureSession = AVCaptureSession()
-    let captureDevice: CaptureDevice
     
+    var delegate: CaptureSessionDelegate?
     let size: (width: Int, height: Int) = (width: 720, height: 1280)
     
+    private var textureCache: CVMetalTextureCache?
+    private let captureSession = AVCaptureSession()
+    private let captureDevice: CaptureDevice
     private var sessionQueue = DispatchQueue(label: "CaptureSessionQueue")
     private let textureConverter = TextureConverter()
 
@@ -31,6 +39,7 @@ class CaptureSession: NSObject {
         CVMetalTextureCacheCreate(kCFAllocatorDefault, nil, metalDevice, nil, &textureCache)
     }
     
+    /// Start camera streaming.
     func start() {
         requestCaptureDeviceAccess()
         
@@ -44,6 +53,7 @@ class CaptureSession: NSObject {
         }
     }
     
+    /// Stop camera streaming.
     func stop() {
         sessionQueue.async {
             self.captureSession.stopRunning()
@@ -71,7 +81,7 @@ class CaptureSession: NSObject {
         }
     }
     
-    func configureDeviceOutput() {
+    private func configureDeviceOutput() {
         let outputData = AVCaptureVideoDataOutput()
         outputData.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String : Int(kCVPixelFormatType_32BGRA)]
         outputData.setSampleBufferDelegate(self, queue: sessionQueue)

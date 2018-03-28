@@ -20,6 +20,7 @@
 		558146DE206994AB005CB523 /* RecognizedDigitCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558146DD206994AB005CB523 /* RecognizedDigitCollectionViewCell.swift */; };
 		558146E0206994DE005CB523 /* RecognizingResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558146DF206994DE005CB523 /* RecognizingResultViewController.swift */; };
 		558146E2206996BA005CB523 /* RecognizingResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558146E1206996BA005CB523 /* RecognizingResult.swift */; };
+		558BBCFB206C1EAE00AE90EB /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558BBCFA206C1EAE00AE90EB /* Filter.swift */; };
 		558CBA3D20587EF90058E4A4 /* CNN.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558CBA3C20587EF90058E4A4 /* CNN.swift */; };
 		55CDB4BA204DA4AE00172632 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CDB4B9204DA4AE00172632 /* AppDelegate.swift */; };
 		55CDB4BC204DA4AE00172632 /* RecognizerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CDB4BB204DA4AE00172632 /* RecognizerViewController.swift */; };
@@ -51,6 +52,7 @@
 		558146DD206994AB005CB523 /* RecognizedDigitCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizedDigitCollectionViewCell.swift; sourceTree = "<group>"; };
 		558146DF206994DE005CB523 /* RecognizingResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizingResultViewController.swift; sourceTree = "<group>"; };
 		558146E1206996BA005CB523 /* RecognizingResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizingResult.swift; sourceTree = "<group>"; };
+		558BBCFA206C1EAE00AE90EB /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		558CBA3C20587EF90058E4A4 /* CNN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CNN.swift; sourceTree = "<group>"; };
 		55CDB4B6204DA4AE00172632 /* Digit-Recognizer-via-Metal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Digit-Recognizer-via-Metal.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		55CDB4B9204DA4AE00172632 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -81,6 +83,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		558BBCFC206C26FA00AE90EB /* CNN */ = {
+			isa = PBXGroup;
+			children = (
+				55CDFED12057929300111BD6 /* ImageProvider.swift */,
+				558CBA3C20587EF90058E4A4 /* CNN.swift */,
+			);
+			path = CNN;
+			sourceTree = "<group>";
+		};
 		55CDB4AD204DA4AE00172632 = {
 			isa = PBXGroup;
 			children = (
@@ -105,15 +116,13 @@
 				558146DF206994DE005CB523 /* RecognizingResultViewController.swift */,
 				55CDB4BD204DA4AE00172632 /* Main.storyboard */,
 				5526A326204F38AA00C30D22 /* Shaders.metal */,
-				5526A32C205093DA00C30D22 /* TextureConverter.swift */,
-				55CDFED12057929300111BD6 /* ImageProvider.swift */,
 				55CDB4C5204DA4AE00172632 /* Info.plist */,
+				558BBCFC206C26FA00AE90EB /* CNN */,
 				55CDFECE205790F800111BD6 /* Capture */,
 				55CDFECD205790DE00111BD6 /* Filters */,
 				55CDFED02057912300111BD6 /* Views */,
 				55CDFECF2057911100111BD6 /* ConnectedComponent */,
 				55CDFED320579A5F00111BD6 /* Support */,
-				558CBA3C20587EF90058E4A4 /* CNN.swift */,
 				558146E1206996BA005CB523 /* RecognizingResult.swift */,
 			);
 			path = "Digit-Recognizer-via-Metal";
@@ -124,6 +133,7 @@
 			children = (
 				5526A32E20528A9100C30D22 /* FilterSequence.swift */,
 				5529C2AB20532DAC00D888C9 /* FilterLibrary.swift */,
+				558BBCFA206C1EAE00AE90EB /* Filter.swift */,
 			);
 			path = Filters;
 			sourceTree = "<group>";
@@ -133,6 +143,7 @@
 			children = (
 				5526A328205075C000C30D22 /* CaptureSession.swift */,
 				5526A32A205077AA00C30D22 /* CaptureDevice.swift */,
+				5526A32C205093DA00C30D22 /* TextureConverter.swift */,
 			);
 			path = Capture;
 			sourceTree = "<group>";
@@ -268,6 +279,7 @@
 				5529C2AE2053EAA300D888C9 /* FilterCollectionViewCell.swift in Sources */,
 				55788F2520552E33009C2A92 /* UnionFind.swift in Sources */,
 				5529C2AC20532DAC00D888C9 /* FilterLibrary.swift in Sources */,
+				558BBCFB206C1EAE00AE90EB /* Filter.swift in Sources */,
 				5526A32D205093DA00C30D22 /* TextureConverter.swift in Sources */,
 				5526A327204F38AA00C30D22 /* Shaders.metal in Sources */,
 				5526A32B205077AA00C30D22 /* CaptureDevice.swift in Sources */,
