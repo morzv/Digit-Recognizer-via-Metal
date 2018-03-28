@@ -13,8 +13,7 @@ import UIKit
 /// Manage image preparing for CNN input.
 class ImageProvider {
     private var rawData: [UInt8]
-    private var imageWidth: Int
-    private var imageHeight: Int
+    private var imageSize: (width: Int, height: Int)
     private var cropSize: CGSize
     
     private let bitsPerComponent = 8
@@ -22,17 +21,16 @@ class ImageProvider {
     private let colorSpace = CGColorSpaceCreateDeviceGray()
     private let bitmapInfoRaw = CGImageAlphaInfo.none.rawValue
     
-    init(rawData: [UInt8], imageWidth: Int, imageHeight: Int, cropSize: CGSize) {
+    init(rawData: [UInt8], imageSize: (width: Int, height: Int), cropSize: CGSize) {
         self.rawData = rawData
-        self.imageWidth = imageWidth
-        self.imageHeight = imageHeight
+        self.imageSize = imageSize
         self.cropSize = cropSize
     }
     
     func createImage() -> CGImage? {
         let bitsPerPixel = bytesPerPixel * bitsPerComponent
-        let bytesPerRow = bytesPerPixel * imageWidth
-        let imageBytes = bytesPerRow * imageHeight
+        let bytesPerRow = bytesPerPixel * imageSize.width
+        let imageBytes = bytesPerRow * imageSize.height
         
         
         let cgImage = rawData.withUnsafeBytes { data -> CGImage? in
@@ -43,8 +41,8 @@ class ImageProvider {
             }
             
             if let providerRef = CGDataProvider(dataInfo: nil, data: data.baseAddress!, size: imageBytes, releaseData: releaseData) {
-                imageRef = CGImage(width: imageWidth,
-                                   height: imageHeight,
+                imageRef = CGImage(width: imageSize.width,
+                                   height: imageSize.height,
                                    bitsPerComponent: bitsPerComponent,
                                    bitsPerPixel: bitsPerPixel,
                                    bytesPerRow: bytesPerRow,

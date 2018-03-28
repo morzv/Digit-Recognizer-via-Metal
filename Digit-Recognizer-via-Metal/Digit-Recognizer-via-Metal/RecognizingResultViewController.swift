@@ -12,7 +12,9 @@ class RecognizingResultViewController: UIViewController {
 
     @IBOutlet weak var resultCollectionView: UICollectionView!
     
-    var results: [RecognizingResult]?
+    var results: [RecognizedResult]?
+    
+    private let cellReuseId = "RecognizedDigitCollectionViewCell"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,7 +33,7 @@ extension RecognizingResultViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RecognizedDigitCollectionViewCell", for: indexPath) as! RecognizedDigitCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuseId, for: indexPath) as! RecognizedDigitCollectionViewCell
         
         if let result = results?[indexPath.row] {
             cell.imageView.image = result.image

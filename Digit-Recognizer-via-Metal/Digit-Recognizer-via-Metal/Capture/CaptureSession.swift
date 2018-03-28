@@ -26,10 +26,10 @@ class CaptureSession: NSObject {
     var delegate: CaptureSessionDelegate?
     let size: (width: Int, height: Int) = (width: 720, height: 1280)
     
+    private var sessionQueue = DispatchQueue(label: "CaptureSessionQueue")
     private var textureCache: CVMetalTextureCache?
     private let captureSession = AVCaptureSession()
     private let captureDevice: CaptureDevice
-    private var sessionQueue = DispatchQueue(label: "CaptureSessionQueue")
     private let textureConverter = TextureConverter()
 
     init(metalDevice: MTLDevice, captureDevice: CaptureDevice)

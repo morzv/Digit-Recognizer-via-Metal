@@ -9,7 +9,7 @@
 import UIKit
 
 /// Describe result of CNN.
-struct RecognizingResult {
+struct RecognizedResult {
     /// Recognized digit
     let digit: Int
     

@@ -18,80 +18,46 @@ class RecognizerViewController: UIViewController {
     @IBOutlet weak var filtersCollectionView: UICollectionView!
     @IBOutlet weak var componentsView: ComponentsView!
     
-    var camera: CaptureDevice!
-    var session: CaptureSession!
+    private var renderService: RenderService!
     
-    var metalDevice = MTLCreateSystemDefaultDevice()
-    var sourceTexture: MTLTexture?
-    var commandQueue: MTLCommandQueue!
-    
-    var renderPipelineState: MTLRenderPipelineState?
-    
-    var filterLibrary: FilterLibrary!
-    var filterSequence: FilterSequence!
-    var shouldRecognize: Bool = false
-    var filterFinalTexture: MTLTexture!
-    var recognizingResults = [RecognizingResult]()
-    
-    var cnn: CNN!
+//    private var sourceTexture: MTLTexture?
+//    private var filterFinalTexture: MTLTexture!
+
+    private var cnn: CNN!
+    private var filterLibrary: FilterLibrary!
+    private var filterSequence: FilterSequence!
+    private var shouldRecognize: Bool = false
+    private var recognizedResults = [RecognizedResult]()
+
+    private let detailsSegueID = "ShowResults"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(showDetailsViewController))
-        swipe.direction = .up
-        metalView.addGestureRecognizer(swipe)
-        
-        let blurEffect = UIBlurEffect(style: .regular)
-        let blurView = UIVisualEffectView(effect: blurEffect)
-        blurView.frame = filtersCollectionView.frame
-        filtersCollectionView.backgroundColor = .clear
-        filtersCollectionView.backgroundView = blurView
-        
-        filtersCollectionView.dataSource = self
-        filtersCollectionView.delegate = self
-        filtersCollectionView.allowsMultipleSelection = true
-        
-        commandQueue = metalDevice?.makeCommandQueue()
-        camera = CaptureDevice(deviceType: .builtInWideAngleCamera, mediaType: .video, devicePosition: .back)
-        session = CaptureSession(metalDevice: metalDevice!, captureDevice: camera)
-        session.delegate = self
-        
         recognizeButton.layer.cornerRadius = recognizeButton.frame.width / 2.0
+        configureFiltersCollectionView()
+        configureSwipe()
         
-        filterLibrary = FilterLibrary(metalDevice: metalDevice!)
-        filterSequence = FilterSequence(metalDevice: metalDevice!, textureSize: session.size)
-        initializeRenderPipelineState()
+        guard let metalService = MetalService() else { print("Can't create metal device."); return }
         
-        let textDescr = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
-                                                                 width: session.size.width,
-                                                                 height: session.size.height,
-                                                                 mipmapped: false)
-        textDescr.usage.insert(.shaderWrite)
-        filterFinalTexture = metalDevice!.makeTexture(descriptor: textDescr)
+        guard let recognizeService = RenderService(metalService: metalService) else { return }
+        self.renderService = recognizeService
         
-        cnn = CNN(metalDevice: metalDevice!)
+        configureMetalView()
+        filterLibrary = FilterLibrary(metalDevice: metalService.device)
+        filterSequence = FilterSequence(metalDevice: metalService.device, textureSize: recognizeService.session.size)
+        
+        cnn = CNN(metalDevice: metalService.device)
+        recognizeService.session.start()
     }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        metalView.device = self.metalDevice
-        metalView.delegate = self
-        metalView.colorPixelFormat = .bgra8Unorm
-        metalView.framebufferOnly = false
-        
-        session.start()
-    }
-
 
     @IBAction func recognizeButtonDidTap(_ sender: UIButton) {
         filterSequence.clear()
-        recognizingResults.removeAll()
+        recognizedResults.removeAll()
         
         if sender.isSelected {
             componentsView.clear()
-            session.start()
+            renderService.session.start()
             for index in 0..<filterLibrary.count {
                 let indexPath = IndexPath(item: index, section: 0)
                 filtersCollectionView.deselectItem(at: indexPath, animated: false)
@@ -99,7 +65,7 @@ class RecognizerViewController: UIViewController {
             }
         } else {
             shouldRecognize = true
-            session.stop()
+            renderService.session.stop()
             for index in 0..<filterLibrary.count {
                 let indexPath = IndexPath(item: index, section: 0)
                 filtersCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .left)
@@ -110,45 +76,40 @@ class RecognizerViewController: UIViewController {
         sender.isSelected = !sender.isSelected
         sender.backgroundColor = sender.isSelected ? .gray : .red
     }
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard segue.identifier == "ShowResults",
-            let resultsVC = segue.destination as? RecognizingResultViewController else { return }
-        
-        resultsVC.results = recognizingResults
-    }
-    
-    private func initializeRenderPipelineState() {
-        guard let device = metalDevice,
-            let library = device.makeDefaultLibrary() else {
-                return
-        }
-        
-        let pipelineDescriptor = MTLRenderPipelineDescriptor()
-        pipelineDescriptor.sampleCount = 1
-        pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
-        pipelineDescriptor.depthAttachmentPixelFormat = .invalid
-        
-        pipelineDescriptor.vertexFunction = library.makeFunction(name: "mapTexture")
-        pipelineDescriptor.fragmentFunction = library.makeFunction(name: "displayTexture")
-        
-        do {
-            try renderPipelineState = device.makeRenderPipelineState(descriptor: pipelineDescriptor)
-        }
-        catch {
-            assertionFailure("Failed creating a render state pipeline. Can't render the texture without one.")
-            return
-        }
-    }
     
     @objc func showDetailsViewController() {
-        performSegue(withIdentifier: "ShowResults", sender: self)
+        performSegue(withIdentifier: detailsSegueID, sender: self)
     }
-}
 
-extension RecognizerViewController : CaptureSessionDelegate {
-    func captureSession(_: CaptureSession, didReceiveTexture texture: MTLTexture) {
-        sourceTexture = texture
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard segue.identifier == detailsSegueID,
+            let resultsVC = segue.destination as? RecognizingResultViewController else { return }
+        
+        resultsVC.results = recognizedResults
+    }
+    
+    private func configureFiltersCollectionView() {
+        let blurEffect = UIBlurEffect(style: .regular)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.frame = filtersCollectionView.frame
+        filtersCollectionView.backgroundColor = .clear
+        filtersCollectionView.backgroundView = blurView
+        filtersCollectionView.dataSource = self
+        filtersCollectionView.delegate = self
+        filtersCollectionView.allowsMultipleSelection = true
+    }
+    
+    private func configureSwipe() {
+        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(showDetailsViewController))
+        swipe.direction = .up
+        metalView.addGestureRecognizer(swipe)
+    }
+    
+    private func configureMetalView() {
+        metalView.device = renderService.metalService.device
+        metalView.delegate = self
+        metalView.colorPixelFormat = .bgra8Unorm
+        metalView.framebufferOnly = false
     }
 }
 
@@ -157,37 +118,19 @@ extension RecognizerViewController : MTKViewDelegate {
     }
     
     func draw(in view: MTKView) {
-        guard let texture = sourceTexture,
-            let currentRenderPassDescriptor = metalView.currentRenderPassDescriptor,
-            let currentDrawable = metalView.currentDrawable,
-            let renderPipelineState = renderPipelineState else {
-                return
-        }
-        
-        let commandBuffer = commandQueue.makeCommandBuffer()!
-        filterSequence.encode(to: commandBuffer, sourceTexture: texture, destinationTexture: filterFinalTexture)
-        
-        let renderTexture = filterSequence.isEmpty ? sourceTexture : filterFinalTexture
-        let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: currentRenderPassDescriptor)!
-        encoder.setRenderPipelineState(renderPipelineState)
-        encoder.setFragmentTexture(renderTexture, index: 0)
-        encoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4, instanceCount: 1)
-        encoder.endEncoding()
-        
-        commandBuffer.present(currentDrawable)
-        
-        commandBuffer.addCompletedHandler { (buffer) in
+
+        renderService.render(view: view, with: filterSequence) { (buffer) in
             guard buffer.status == .completed, self.shouldRecognize == true else {
                 return
             }
             
             let bytePerPixel = 4
-            let bytesPerRow = self.session.size.width * bytePerPixel
-            let imageBytesSize = self.session.size.width * self.session.size.height * bytePerPixel
+            let bytesPerRow = self.renderService.session.size.width * bytePerPixel
+            let imageBytesSize = self.renderService.session.size.width * self.renderService.session.size.height * bytePerPixel
             var pixelData = [UInt8](repeating: 0, count: imageBytesSize)
-            let region = MTLRegionMake2D(0, 0, self.session.size.width, self.session.size.height)
+            let region = MTLRegionMake2D(0, 0, self.renderService.session.size.width, self.renderService.session.size.height)
             pixelData.withUnsafeMutableBytes {
-                self.filterFinalTexture.getBytes($0.baseAddress!, bytesPerRow: bytesPerRow, from: region, mipmapLevel: 0)
+                self.renderService.filterFinalTexture.getBytes($0.baseAddress!, bytesPerRow: bytesPerRow, from: region, mipmapLevel: 0)
             }
             
             var pixelIndex = 0
@@ -196,7 +139,7 @@ extension RecognizerViewController : MTKViewDelegate {
                 return pixelIndex % 4 == 0
             }
             
-            let builder = ComponentBuilder(imageData: alphaChannelData, imageWidth: self.session.size.width, imageHeight: self.session.size.height)
+            let builder = ComponentBuilder(imageData: alphaChannelData, imageWidth: self.renderService.session.size.width, imageHeight: self.renderService.session.size.height)
             let components = builder.findComponents()
             
             DispatchQueue.main.async {
@@ -204,8 +147,7 @@ extension RecognizerViewController : MTKViewDelegate {
             }
             
             let imageProvider = ImageProvider(rawData: alphaChannelData,
-                                              imageWidth: self.session.size.width,
-                                              imageHeight: self.session.size.height,
+                                              imageSize: self.renderService.session.size,
                                               cropSize: CGSize(width: 24, height: 24))
             let alphaChannelImage = imageProvider.createImage()
             
@@ -217,8 +159,7 @@ extension RecognizerViewController : MTKViewDelegate {
 //                let debugCNNImage = UIImage(cgImage: cnnImage)
 //                let debugCNNImage2 = UIImage(cgImage: cnnImage)
                 
-                let textDescr = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: 28, height: 28, mipmapped: false)
-                let texture = self.metalDevice?.makeTexture(descriptor: textDescr)
+                let texture = self.renderService.metalService.createTexture(for: .r8Unorm, size: (width: 28, height: 28))
                 
                 let inputImage = MPSImage(texture: texture!, featureChannels: 1)
                 inputImage.texture.replace(region: MTLRegionMake2D(0, 0, 28, 28),
@@ -231,16 +172,14 @@ extension RecognizerViewController : MTKViewDelegate {
                         self.componentsView.draw(digit: digit, in: component)
                     }
                     
-                    let result = RecognizingResult(digit: digit, image: UIImage(cgImage: cnnImage))
-                    self.recognizingResults.append(result)
+                    let result = RecognizedResult(digit: digit, image: UIImage(cgImage: cnnImage))
+                    self.recognizedResults.append(result)
                 })
             }
             
             self.shouldRecognize = false
-            self.session.stop()
+            self.renderService.session.stop()
         }
-        
-        commandBuffer.commit()
     }
 }
 
