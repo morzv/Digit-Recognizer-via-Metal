@@ -119,25 +119,25 @@ extension RecognizerViewController : MTKViewDelegate {
     
     func draw(in view: MTKView) {
 
-        renderService.render(view: view, with: filterSequence) { (buffer) in
-            guard buffer.status == .completed, self.shouldRecognize == true else {
-                return
-            }
+        renderService.render(view: view, with: filterSequence, should: self.shouldRecognize) { (alphaChannelData) in
+//            guard self.shouldRecognize == true else {
+//                return
+//            }
             
-            let bytePerPixel = 4
-            let bytesPerRow = self.renderService.session.size.width * bytePerPixel
-            let imageBytesSize = self.renderService.session.size.width * self.renderService.session.size.height * bytePerPixel
-            var pixelData = [UInt8](repeating: 0, count: imageBytesSize)
-            let region = MTLRegionMake2D(0, 0, self.renderService.session.size.width, self.renderService.session.size.height)
-            pixelData.withUnsafeMutableBytes {
-                self.renderService.filterFinalTexture.getBytes($0.baseAddress!, bytesPerRow: bytesPerRow, from: region, mipmapLevel: 0)
-            }
-            
-            var pixelIndex = 0
-            let alphaChannelData = pixelData.filter { _ in
-                defer { pixelIndex += 1 }
-                return pixelIndex % 4 == 0
-            }
+//            let bytePerPixel = 4
+//            let bytesPerRow = self.renderService.session.size.width * bytePerPixel
+//            let imageBytesSize = self.renderService.session.size.width * self.renderService.session.size.height * bytePerPixel
+//            var pixelData = [UInt8](repeating: 0, count: imageBytesSize)
+//            let region = MTLRegionMake2D(0, 0, self.renderService.session.size.width, self.renderService.session.size.height)
+//            pixelData.withUnsafeMutableBytes {
+//                self.renderService.filterFinalTexture.getBytes($0.baseAddress!, bytesPerRow: bytesPerRow, from: region, mipmapLevel: 0)
+//            }
+//
+//            var pixelIndex = 0
+//            let alphaChannelData = pixelData.filter { _ in
+//                defer { pixelIndex += 1 }
+//                return pixelIndex % 4 == 0
+//            }
             
             let builder = ComponentBuilder(imageData: alphaChannelData, imageWidth: self.renderService.session.size.width, imageHeight: self.renderService.session.size.height)
             let components = builder.findComponents()
