@@ -19,17 +19,15 @@ class RecognizerViewController: UIViewController {
     @IBOutlet weak var componentsView: ComponentsView!
     
     private var renderService: RenderService!
+    private var recognizeService: RecognizeService!
+    private var shouldRecognize: Bool = false
     
-//    private var sourceTexture: MTLTexture?
-//    private var filterFinalTexture: MTLTexture!
-
-    private var cnn: CNN!
     private var filterLibrary: FilterLibrary!
     private var filterSequence: FilterSequence!
-    private var shouldRecognize: Bool = false
     private var recognizedResults = [RecognizedResult]()
-
+    
     private let detailsSegueID = "ShowResults"
+    private let filterCellID = "FilterCell"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,15 +38,17 @@ class RecognizerViewController: UIViewController {
         
         guard let metalService = MetalService() else { print("Can't create metal device."); return }
         
-        guard let recognizeService = RenderService(metalService: metalService) else { return }
-        self.renderService = recognizeService
+        recognizeService = RecognizeService(metalService: metalService)
+        recognizeService.delegate = self
+        
+        guard let renderSevice = RenderService(metalService: metalService) else { return }
+        self.renderService = renderSevice
         
         configureMetalView()
         filterLibrary = FilterLibrary(metalDevice: metalService.device)
-        filterSequence = FilterSequence(metalDevice: metalService.device, textureSize: recognizeService.session.size)
+        filterSequence = FilterSequence(metalDevice: metalService.device, textureSize: renderSevice.session.size)
         
-        cnn = CNN(metalDevice: metalService.device)
-        recognizeService.session.start()
+        renderSevice.session.start()
     }
 
     @IBAction func recognizeButtonDidTap(_ sender: UIButton) {
@@ -114,71 +114,16 @@ class RecognizerViewController: UIViewController {
 }
 
 extension RecognizerViewController : MTKViewDelegate {
-    func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-    }
+    func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) { }
     
     func draw(in view: MTKView) {
-
-        renderService.render(view: view, with: filterSequence, should: self.shouldRecognize) { (alphaChannelData) in
-//            guard self.shouldRecognize == true else {
-//                return
-//            }
-            
-//            let bytePerPixel = 4
-//            let bytesPerRow = self.renderService.session.size.width * bytePerPixel
-//            let imageBytesSize = self.renderService.session.size.width * self.renderService.session.size.height * bytePerPixel
-//            var pixelData = [UInt8](repeating: 0, count: imageBytesSize)
-//            let region = MTLRegionMake2D(0, 0, self.renderService.session.size.width, self.renderService.session.size.height)
-//            pixelData.withUnsafeMutableBytes {
-//                self.renderService.filterFinalTexture.getBytes($0.baseAddress!, bytesPerRow: bytesPerRow, from: region, mipmapLevel: 0)
-//            }
-//
-//            var pixelIndex = 0
-//            let alphaChannelData = pixelData.filter { _ in
-//                defer { pixelIndex += 1 }
-//                return pixelIndex % 4 == 0
-//            }
-            
-            let builder = ComponentBuilder(imageData: alphaChannelData, imageWidth: self.renderService.session.size.width, imageHeight: self.renderService.session.size.height)
-            let components = builder.findComponents()
-            
-            DispatchQueue.main.async {
-                self.componentsView.draw(components: components)
-            }
-            
-            let imageProvider = ImageProvider(rawData: alphaChannelData,
-                                              imageSize: self.renderService.session.size,
-                                              cropSize: CGSize(width: 24, height: 24))
-            let alphaChannelImage = imageProvider.createImage()
-            
-            for component in components {
-                guard let croppedImage = alphaChannelImage?.cropping(to: component),
-                    let cnnImage = imageProvider.imageForCNN(from: croppedImage)  else { continue }
-
-//                let debugCropppedImage = UIImage(cgImage: croppedImage)
-//                let debugCNNImage = UIImage(cgImage: cnnImage)
-//                let debugCNNImage2 = UIImage(cgImage: cnnImage)
-                
-                let texture = self.renderService.metalService.createTexture(for: .r8Unorm, size: (width: 28, height: 28))
-                
-                let inputImage = MPSImage(texture: texture!, featureChannels: 1)
-                inputImage.texture.replace(region: MTLRegionMake2D(0, 0, 28, 28),
-                                           mipmapLevel: 0,
-                                           withBytes: CFDataGetBytePtr(cnnImage.dataProvider!.data!),
-                                           bytesPerRow: 28)
-                
-                self.cnn.recognizeDigit(in: inputImage, completionHandler: { digit in
-                    DispatchQueue.main.async {
-                        self.componentsView.draw(digit: digit, in: component)
-                    }
-                    
-                    let result = RecognizedResult(digit: digit, image: UIImage(cgImage: cnnImage))
-                    self.recognizedResults.append(result)
-                })
-            }
+        renderService.render(view: view, with: filterSequence) { (finalTexture) in
+            guard self.shouldRecognize else { return }
             
             self.shouldRecognize = false
             self.renderService.session.stop()
+            
+            self.recognizeService.recognizeDigit(in: finalTexture, with: self.renderService.session.size)
         }
     }
 }
@@ -189,7 +134,7 @@ extension RecognizerViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FilterCell", for: indexPath) as! FilterCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: filterCellID, for: indexPath) as! FilterCollectionViewCell
         let filterTitle = filterLibrary[indexPath.row].name
         cell.titleLabel.text = filterTitle
         
@@ -206,5 +151,21 @@ extension RecognizerViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         let kernel = filterLibrary[indexPath.row].kernel
         filterSequence.remove(filter: kernel)
+    }
+}
+
+extension RecognizerViewController: RecognizeServiceDelegate {
+    func recognizeService(_ service: RecognizeService, didFindComponents components: [CGRect]) {
+        DispatchQueue.main.async {
+            self.componentsView.draw(components: components)
+        }
+    }
+    
+    func recognizeService(_ service: RecognizeService, didRecognize result: RecognizedResult, in component: CGRect) {
+        DispatchQueue.main.async {
+            self.componentsView.draw(digit: result.digit, in: component)
+        }
+        
+        self.recognizedResults.append(result)
     }
 }

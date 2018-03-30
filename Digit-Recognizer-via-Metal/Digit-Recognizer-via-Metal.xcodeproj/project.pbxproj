@@ -20,6 +20,7 @@
 		558146DE206994AB005CB523 /* RecognizedDigitCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558146DD206994AB005CB523 /* RecognizedDigitCollectionViewCell.swift */; };
 		558146E0206994DE005CB523 /* RecognizingResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558146DF206994DE005CB523 /* RecognizingResultViewController.swift */; };
 		558146E2206996BA005CB523 /* RecognizedResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558146E1206996BA005CB523 /* RecognizedResult.swift */; };
+		5587A91C206EE60C00DB364C /* RecognizeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5587A91B206EE60C00DB364C /* RecognizeService.swift */; };
 		558BBCFB206C1EAE00AE90EB /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558BBCFA206C1EAE00AE90EB /* Filter.swift */; };
 		558CBA3D20587EF90058E4A4 /* CNN.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558CBA3C20587EF90058E4A4 /* CNN.swift */; };
 		55AAC48A206C3C3500A518C9 /* RenderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AAC489206C3C3500A518C9 /* RenderService.swift */; };
@@ -54,6 +55,7 @@
 		558146DD206994AB005CB523 /* RecognizedDigitCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizedDigitCollectionViewCell.swift; sourceTree = "<group>"; };
 		558146DF206994DE005CB523 /* RecognizingResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizingResultViewController.swift; sourceTree = "<group>"; };
 		558146E1206996BA005CB523 /* RecognizedResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizedResult.swift; sourceTree = "<group>"; };
+		5587A91B206EE60C00DB364C /* RecognizeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizeService.swift; sourceTree = "<group>"; };
 		558BBCFA206C1EAE00AE90EB /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		558CBA3C20587EF90058E4A4 /* CNN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CNN.swift; sourceTree = "<group>"; };
 		55AAC489206C3C3500A518C9 /* RenderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderService.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 				55CDFED320579A5F00111BD6 /* Support */,
 				558146E1206996BA005CB523 /* RecognizedResult.swift */,
 				55AAC489206C3C3500A518C9 /* RenderService.swift */,
+				5587A91B206EE60C00DB364C /* RecognizeService.swift */,
 				55AAC48B206C41C600A518C9 /* MetalService.swift */,
 			);
 			path = "Digit-Recognizer-via-Metal";
@@ -288,6 +291,7 @@
 				55788F2520552E33009C2A92 /* UnionFind.swift in Sources */,
 				5529C2AC20532DAC00D888C9 /* FilterLibrary.swift in Sources */,
 				558BBCFB206C1EAE00AE90EB /* Filter.swift in Sources */,
+				5587A91C206EE60C00DB364C /* RecognizeService.swift in Sources */,
 				5526A32D205093DA00C30D22 /* TextureConverter.swift in Sources */,
 				5526A327204F38AA00C30D22 /* Shaders.metal in Sources */,
 				5526A32B205077AA00C30D22 /* CaptureDevice.swift in Sources */,

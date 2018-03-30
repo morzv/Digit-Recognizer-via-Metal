@@ -26,7 +26,7 @@ class RenderService {
         session.delegate = self
     }
     
-    func render(view: MTKView, with filterSequence: FilterSequence, should: Bool, completionHandler: @escaping ([UInt8]) -> Void) {
+    func render(view: MTKView, with filterSequence: FilterSequence, completionHandler: @escaping (MTLTexture) -> Void) {
         guard let texture = sourceTexture,
             let currentRenderPassDescriptor = view.currentRenderPassDescriptor,
             let currentDrawable = view.currentDrawable else { return }
@@ -42,25 +42,9 @@ class RenderService {
         encoder.endEncoding()
         
         commandBuffer.present(currentDrawable)
-//        commandBuffer.addCompletedHandler(completionHandler)
         commandBuffer.addCompletedHandler { (buffer) in
-            guard buffer.status == .completed, should == true else { return }
-            let bytePerPixel = 4
-            let bytesPerRow = self.session.size.width * bytePerPixel
-            let imageBytesSize = self.session.size.width * self.session.size.height * bytePerPixel
-            var pixelData = [UInt8](repeating: 0, count: imageBytesSize)
-            let region = MTLRegionMake2D(0, 0, self.session.size.width, self.session.size.height)
-            pixelData.withUnsafeMutableBytes {
-                self.filterFinalTexture.getBytes($0.baseAddress!, bytesPerRow: bytesPerRow, from: region, mipmapLevel: 0)
-            }
-            
-            var pixelIndex = 0
-            let alphaChannelData = pixelData.filter { _ in
-                defer { pixelIndex += 1 }
-                return pixelIndex % 4 == 0
-            }
-            
-            completionHandler(alphaChannelData)
+            guard buffer.status == .completed else { return }
+            completionHandler(self.filterFinalTexture)
         }
         commandBuffer.commit()
     }
