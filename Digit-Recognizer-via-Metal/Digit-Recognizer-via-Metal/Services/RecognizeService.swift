@@ -11,14 +11,28 @@ import MetalKit
 import MetalPerformanceShaders
 
 
+/// Protocol for result of recognize service.
 protocol RecognizeServiceDelegate: class {
+    /// Signal, when service found some area, which can contain digit.
+    ///
+    /// - Parameters:
+    ///   - service: Service, which found component.
+    ///   - components: Sequence of rects, which can contain digit.
     func recognizeService(_ service: RecognizeService, didFindComponents components: [CGRect])
+    
+    /// Signal, when service detect digit in some area.
+    ///
+    /// - Parameters:
+    ///   - service: Service, which recognize digit.
+    ///   - result: Recognized result.
+    ///   - component: Rect, which contains recognized digit.
     func recognizeService(_ service: RecognizeService, didRecognize result: RecognizedResult, in component: CGRect)
 }
 
+/// Responsible for digit detection and recognizing.
 class RecognizeService {
-    
     weak var delegate: RecognizeServiceDelegate?
+    
     private let cnn: CNN
     private let metalService: MetalService
     
@@ -27,6 +41,11 @@ class RecognizeService {
         cnn = CNN(metalDevice: metalService.device)
     }
     
+    /// Detect digit position and recognize its class.
+    ///
+    /// - Parameters:
+    ///   - texture: Binarized texture. Source of digit detection and recognition.
+    ///   - size: Size of texture.
     func recognizeDigit(in texture: MTLTexture, with size: (width: Int, height: Int)) {
         let alphaChannelData = createAlphaChannelData(from: texture, with: size)
         

@@ -89,6 +89,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5587A91D206F017500DB364C /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				55AAC489206C3C3500A518C9 /* RenderService.swift */,
+				5587A91B206EE60C00DB364C /* RecognizeService.swift */,
+				55AAC48B206C41C600A518C9 /* MetalService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		558BBCFC206C26FA00AE90EB /* CNN */ = {
 			isa = PBXGroup;
 			children = (
@@ -130,9 +140,7 @@
 				55CDFECF2057911100111BD6 /* ConnectedComponent */,
 				55CDFED320579A5F00111BD6 /* Support */,
 				558146E1206996BA005CB523 /* RecognizedResult.swift */,
-				55AAC489206C3C3500A518C9 /* RenderService.swift */,
-				5587A91B206EE60C00DB364C /* RecognizeService.swift */,
-				55AAC48B206C41C600A518C9 /* MetalService.swift */,
+				5587A91D206F017500DB364C /* Services */,
 			);
 			path = "Digit-Recognizer-via-Metal";
 			sourceTree = "<group>";

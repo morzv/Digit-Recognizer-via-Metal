@@ -8,6 +8,7 @@
 
 import MetalKit
 
+/// Responsible for access to main Metal components.
 class MetalService {
     
     let device: MTLDevice
@@ -37,6 +38,12 @@ class MetalService {
         }
     }
     
+    /// Create new metal texture with shaderWrite usage option.
+    ///
+    /// - Parameters:
+    ///   - type: Pixel format.
+    ///   - size: Size of new texture.
+    /// - Returns: New metal texture.
     func createTexture(for type: MTLPixelFormat, size: (width: Int, height: Int)) -> MTLTexture? {
         let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: type,
                                                                  width: size.width,

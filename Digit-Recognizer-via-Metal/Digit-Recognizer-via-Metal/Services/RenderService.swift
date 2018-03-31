@@ -8,13 +8,15 @@
 
 import MetalKit
 
+/// Incapsulate logic of rendering captured data from device
+/// and applying selected filters.
 class RenderService {
     let metalService: MetalService
     let session: CaptureSession
     
     private var camera: CaptureDevice
-    var sourceTexture: MTLTexture?
-    var filterFinalTexture: MTLTexture
+    private var sourceTexture: MTLTexture?
+    private var filterFinalTexture: MTLTexture
     
     init?(metalService: MetalService) {
         guard let captureDevice = CaptureDevice(deviceType: .builtInWideAngleCamera, mediaType: .video, devicePosition: .back) else { return nil }
@@ -26,6 +28,12 @@ class RenderService {
         session.delegate = self
     }
     
+    /// Render captured data from device to view and apply filters to that.
+    ///
+    /// - Parameters:
+    ///   - view: Target for rendering.
+    ///   - filterSequence: Filters which should be applied to result texture.
+    ///   - completionHandler: Block which will be called after rendering.
     func render(view: MTKView, with filterSequence: FilterSequence, completionHandler: @escaping (MTLTexture) -> Void) {
         guard let texture = sourceTexture,
             let currentRenderPassDescriptor = view.currentRenderPassDescriptor,

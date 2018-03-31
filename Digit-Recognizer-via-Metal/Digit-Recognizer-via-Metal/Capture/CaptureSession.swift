@@ -10,7 +10,7 @@ import Foundation
 import AVFoundation
 
 /// Protocol which notify about new texture.
-protocol CaptureSessionDelegate {
+protocol CaptureSessionDelegate: class {
     
     /// Triggered, when new texture did receive.
     ///
@@ -23,7 +23,7 @@ protocol CaptureSessionDelegate {
 /// Manipulates camera streaming.
 class CaptureSession: NSObject {
     
-    var delegate: CaptureSessionDelegate?
+    weak var delegate: CaptureSessionDelegate?
     let size: (width: Int, height: Int) = (width: 720, height: 1280)
     
     private var sessionQueue = DispatchQueue(label: "CaptureSessionQueue")
