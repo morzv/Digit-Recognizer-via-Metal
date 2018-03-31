@@ -8,6 +8,7 @@
 
 import UIKit
 
+
 class RecognizingResultViewController: UIViewController {
 
     @IBOutlet weak var resultCollectionView: UICollectionView!

@@ -14,7 +14,7 @@
 		5526A32F20528A9100C30D22 /* FilterSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5526A32E20528A9100C30D22 /* FilterSequence.swift */; };
 		5529C2AC20532DAC00D888C9 /* FilterLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5529C2AB20532DAC00D888C9 /* FilterLibrary.swift */; };
 		5529C2AE2053EAA300D888C9 /* FilterCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5529C2AD2053EAA300D888C9 /* FilterCollectionViewCell.swift */; };
-		55788F2120543729009C2A92 /* ComponentBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55788F2020543729009C2A92 /* ComponentBuilder.swift */; };
+		55788F2120543729009C2A92 /* ComponentProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55788F2020543729009C2A92 /* ComponentProvider.swift */; };
 		55788F23205517B2009C2A92 /* ComponentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55788F22205517B2009C2A92 /* ComponentsView.swift */; };
 		55788F2520552E33009C2A92 /* UnionFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55788F2420552E33009C2A92 /* UnionFind.swift */; };
 		558146DE206994AB005CB523 /* RecognizedDigitCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558146DD206994AB005CB523 /* RecognizedDigitCollectionViewCell.swift */; };
@@ -49,7 +49,7 @@
 		5526A32E20528A9100C30D22 /* FilterSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterSequence.swift; sourceTree = "<group>"; };
 		5529C2AB20532DAC00D888C9 /* FilterLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterLibrary.swift; sourceTree = "<group>"; };
 		5529C2AD2053EAA300D888C9 /* FilterCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterCollectionViewCell.swift; sourceTree = "<group>"; };
-		55788F2020543729009C2A92 /* ComponentBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentBuilder.swift; sourceTree = "<group>"; };
+		55788F2020543729009C2A92 /* ComponentProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentProvider.swift; sourceTree = "<group>"; };
 		55788F22205517B2009C2A92 /* ComponentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentsView.swift; sourceTree = "<group>"; };
 		55788F2420552E33009C2A92 /* UnionFind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnionFind.swift; sourceTree = "<group>"; };
 		558146DD206994AB005CB523 /* RecognizedDigitCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizedDigitCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -133,6 +133,7 @@
 				55CDB4BD204DA4AE00172632 /* Main.storyboard */,
 				5526A326204F38AA00C30D22 /* Shaders.metal */,
 				55CDB4C5204DA4AE00172632 /* Info.plist */,
+				5587A91D206F017500DB364C /* Services */,
 				558BBCFC206C26FA00AE90EB /* CNN */,
 				55CDFECE205790F800111BD6 /* Capture */,
 				55CDFECD205790DE00111BD6 /* Filters */,
@@ -140,7 +141,6 @@
 				55CDFECF2057911100111BD6 /* ConnectedComponent */,
 				55CDFED320579A5F00111BD6 /* Support */,
 				558146E1206996BA005CB523 /* RecognizedResult.swift */,
-				5587A91D206F017500DB364C /* Services */,
 			);
 			path = "Digit-Recognizer-via-Metal";
 			sourceTree = "<group>";
@@ -168,7 +168,7 @@
 		55CDFECF2057911100111BD6 /* ConnectedComponent */ = {
 			isa = PBXGroup;
 			children = (
-				55788F2020543729009C2A92 /* ComponentBuilder.swift */,
+				55788F2020543729009C2A92 /* ComponentProvider.swift */,
 				55788F2420552E33009C2A92 /* UnionFind.swift */,
 			);
 			path = ConnectedComponent;
@@ -292,7 +292,7 @@
 				55788F23205517B2009C2A92 /* ComponentsView.swift in Sources */,
 				558CBA3D20587EF90058E4A4 /* CNN.swift in Sources */,
 				5526A32F20528A9100C30D22 /* FilterSequence.swift in Sources */,
-				55788F2120543729009C2A92 /* ComponentBuilder.swift in Sources */,
+				55788F2120543729009C2A92 /* ComponentProvider.swift in Sources */,
 				55AAC48A206C3C3500A518C9 /* RenderService.swift in Sources */,
 				55AAC48C206C41C600A518C9 /* MetalService.swift in Sources */,
 				5529C2AE2053EAA300D888C9 /* FilterCollectionViewCell.swift in Sources */,

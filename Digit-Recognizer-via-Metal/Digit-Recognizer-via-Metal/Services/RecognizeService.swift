@@ -49,7 +49,7 @@ class RecognizeService {
     func recognizeDigit(in texture: MTLTexture, with size: (width: Int, height: Int)) {
         let alphaChannelData = createAlphaChannelData(from: texture, with: size)
         
-        let builder = ComponentBuilder(imageData: alphaChannelData, imageWidth: size.width, imageHeight: size.height)
+        let builder = ComponentProvider(imageData: alphaChannelData, size: size)
         let components = builder.findComponents()
         delegate?.recognizeService(self, didFindComponents: components)
         

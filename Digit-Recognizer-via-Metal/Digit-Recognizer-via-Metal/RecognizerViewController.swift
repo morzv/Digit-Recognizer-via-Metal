@@ -46,7 +46,7 @@ class RecognizerViewController: UIViewController {
         
         configureMetalView()
         filterLibrary = FilterLibrary(metalDevice: metalService.device)
-        filterSequence = FilterSequence(metalDevice: metalService.device, textureSize: renderSevice.session.size)
+        filterSequence = FilterSequence(metalService: metalService, textureSize: renderSevice.session.size)
         
         renderSevice.session.start()
     }

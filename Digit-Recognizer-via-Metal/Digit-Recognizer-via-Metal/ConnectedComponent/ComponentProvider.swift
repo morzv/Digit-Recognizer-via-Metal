@@ -1,5 +1,5 @@
 //
-//  ComponentBuilder.swift
+//  ComponentProvider.swift
 //  Digit-Recognizer-via-Metal
 //
 //  Created by Andrey Morozov on 10.03.2018.
@@ -9,21 +9,17 @@
 import Foundation
 import CoreGraphics
 
-class ComponentBuilder {
-    let rows: Int
-    let columns: Int
-    let width: Int
-    let height: Int
-    let data: [UInt8]
+class ComponentProvider {
+    private let width: Int
+    private let height: Int
+    private let data: [UInt8]
     private var componentMap: [[Int]]
     private var currentComponent = 0
     private var isFound = false
     
-    init(imageData data: [UInt8], imageWidth width: Int, imageHeight height: Int) {
-        rows = height
-        columns = width
-        self.height = height
-        self.width = width
+    init(imageData data: [UInt8], size: (width: Int, height: Int)) {
+        self.height = size.height
+        self.width = size.width
         self.data = data
         let componentRow = [Int](repeating: -1, count: width)
         componentMap = [[Int]](repeating: componentRow, count: height)
@@ -101,11 +97,11 @@ class ComponentBuilder {
     }
     
     private func isBackgroundPoint(_ x: Int, _ y: Int) -> Bool {
-        return data[y * columns + x] == 0 //black color is background
+        return data[y * width + x] == 0 //black color is background
     }
     
     private func isOutsidePoint(_ x: Int, _ y: Int) -> Bool {
-        return x >= columns || x < 0 || y >= rows || y < 0
+        return x >= width || x < 0 || y >= height || y < 0
     }
     
     private func isCheckedPoint(_ x: Int, _ y: Int) -> Bool {
@@ -119,8 +115,8 @@ class ComponentBuilder {
     func findBorderPoints(componentMap: [[Int]]) -> [Int : ComponentRect] {
         var componentRects = [Int : ComponentRect]()
         
-        for y in 0..<rows {
-            for x in 0..<columns {
+        for y in 0..<height {
+            for x in 0..<width {
                 guard componentMap[y][x] != -1 else { continue }
                 
                 let component = componentMap[y][x]
