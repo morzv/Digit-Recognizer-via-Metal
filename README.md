@@ -13,7 +13,7 @@ It is backed on the Metal framework for handwritten digits recognition.
 <img height="500" src="https://github.com/Jastic7/Digit-Recognizer-via-Metal/blob/master/input.png"/>
 
 ##### Output - binarized image with detected and recognized digits.
-<p align="center">
+<p>
 <img height="500" src="https://github.com/Jastic7/Digit-Recognizer-via-Metal/blob/master/output.png"/>
 <img height="500" src="https://github.com/Jastic7/Digit-Recognizer-via-Metal/blob/master/results.png"/>
 </p>
